@@ -73,11 +73,9 @@ Where:
 
 ## Root Mean Square Error (RMSE)
 
-\[
-RMSE = \sqrt{\frac{1}{N}\sum_{i=1}^{N}(d_{ICP,i} - d_{true})^2}
-\]
-
----
+$$
+RMSE = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (d_{ICP,i} - d_{true})^2}
+$$
 
 ## Experimental Results
 
