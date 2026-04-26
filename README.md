@@ -10,6 +10,14 @@ At this stage, localization is performed exclusively using LiDAR scan matching, 
 ---
 
 ## Scope of This Work
+<p align="center">
+  <img src="images/localization_architecture.png" width="450">
+</p>
+
+<p align="center">
+  <em>Figure: LiDAR–Encoder based localization architecture</em>
+</p>
+``
 
 ### Included
 - 2D LiDAR scan-to-scan ICP
