@@ -134,7 +134,6 @@ Planned extensions include:
 
 | Topic Name | Message Type | Description |
 |-----------|------------|------------|
-| /pose_modelcars | mocap_msgs/RigidBodies.msg |Capture external OptiTrack motion pose of the robot in the world (OptiTrack) frame.Used for orientation stabilization and drift correction.|
 | /static_map | nav_msgs/OccupancyGrid.msg | Static hospital layout in map frame(ENU-coordinates) |
 | /ackermann_drive_feedback | ackermann_msgs/AckermannDrive.msg | Robot motion feedback in base_link frame (vehicle frame): speed and steering angle for motion prediction using Ackermann kinematics. |
 | /scan | sensor_msgs/LaserScan.msg | Raw LiDAR measurements use to estimate object boundaries and distance information.  |
@@ -143,7 +142,7 @@ Planned extensions include:
 
 | Topic Name | Message Type | Description |
 |-----------|------------|------------|
-| /odometry | nav_msgs/Odometry.msg | Estimated robot pose and velocity in map frame(ENU-coordinates). Used by Path Planning and Trajectory Planning. |
+| /odom | nav_msgs/Odometry.msg | Estimate relative robot pose and velocity . Used by Path Planning and Trajectory Planning. |
 
 
 - `ROS 2` (Humble or later)  
