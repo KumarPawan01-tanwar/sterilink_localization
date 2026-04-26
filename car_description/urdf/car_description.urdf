@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+
+<!--**********************************************************************
+*  PROJECT       BRAINPILOT                                              *
+*  MODULE        CarModel                                                *
+*  REVISION      1.0                                                     *
+*  AUTHOR        Ahsan Bin Yusob / Yannick Pfister                                       *   
+**************************************************************************
+*  PURPOSE:                                                              *
+*   URDF Implementation of the Car Model urdf file        *
+***********************************************************************-->
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="modelcar">
+  <xacro:arg name="visual_only" default="true"/>
+
+  <!-- Define robot constants -->
+  <xacro:property name="mesh_scale_xyz" value="0.00100 0.00100 0.00100"/> <!-- Evoque model scale from actual -->
+  <xacro:property name="car_center_pos" value="0.27 0 0.125"/> <!-- TODO: Car center of gravity position from base_link -->
+  <xacro:property name="base_length" value="0.8"/>
+  <xacro:property name="base_height" value="0.4"/>
+  <xacro:property name="base_width" value="0.4"/>
+  <xacro:property name="base_xoff" value="0.055"/>
+  <xacro:property name="base_yoff" value="0.0"/>
+  <xacro:property name="base_zoff" value="0.38"/>
+  <xacro:property name="base_mass" value="15"/>
+  <xacro:property name="wheel_mass" value="0.5"/>
+  <xacro:property name="wheel_radius" value="0.07"/>
+  <xacro:property name="wheel_width" value="0.04"/>
+  <xacro:property name="wheel_separation_x" value="0.5"/>
+  <xacro:property name="wheel_separation_y" value="0.3"/>
+  <xacro:property name="wheel_xoff" value="0.0"/> <!-- wheel offset from respective axle centre -->
+  <xacro:property name="wheel_yoff" value="${wheel_separation_y/2}"/>
+  <xacro:property name="wheel_zoff" value="0.0"/>
+  <xacro:property name="ground_zoff" value="${-(wheel_radius+wheel_zoff)}"/> <!-- base_footprint offset from base_link -->
+
+  <!-- Define colors -->
+  <material name="default_grey">
+    <color rgba="0.6 0.6 0.6 1.0"/> <!-- car body -->
+  </material>
+  <material name="default_black">
+		<color rgba="0.1 0.1 0.1 1.0"/> <!-- car wheel, lidar_G4 -->
+	</material>
+  <material name="lblue">
+		<color rgba="0.0 0.0 1.0 0.7"/> <!-- wheel steer component -->
+	</material>
+
+  <!-- Inertial Formula -->
+  <xacro:macro name="box_inertia" params="m w h d">
+    <inertial>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 ${pi/2}"/>      
+      <mass value="${m}"/>
+      <inertia ixx="${(m/12) * (h*h + d*d)}" ixy="0.0" ixz="0.0" iyy="${(m/12) * (w*w + d*d)}" iyz="0.0" izz="${(m/12) * (w*w + h*h)}"/>
+    </inertial>
+  </xacro:macro>
+  <xacro:macro name="cylinder_inertia" params="m r h">
+    <inertial>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />      
+      <mass value="${m}"/>
+      <inertia ixx="${(m/12) * (3*r*r + h*h)}" ixy = "0" ixz = "0" iyy="${(m/12) * (3*r*r + h*h)}" iyz = "0" izz="${(m/2) * (r*r)}"/> 
+    </inertial>
+  </xacro:macro>
+
+  <!-- REFERENCES (Z-UP)-->
+  <!-- Car body and chassis -->
+	<xacro:include filename="car__body.xacro"/>
+  <xacro:if value="$(arg visual_only)"><xacro:include filename="car__chassis_static.xacro"/></xacro:if>
+  <xacro:unless value="$(arg visual_only)"><xacro:include filename="car__chassis_dynamic.xacro"/></xacro:unless>
+
+  <!-- Car sensors -->
+	<!-- <xacro:include filename="car__sensor_ultrasonic.xacro"/> -->
+	<xacro:include filename="car__sensor_camera.xacro"/>
+	<xacro:include filename="car__sensor_lidar.xacro"/>
+
+</robot>

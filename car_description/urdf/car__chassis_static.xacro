@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+	
+	<!-- Chassis -->
+	<!-- Front and rear axles centre -->
+	<link name="rear_axis"></link>
+	<link name="front_axis"></link>
+	<joint name="origin_to_rear_axis" type="fixed">
+		<parent link="base_link"/>
+		<child link="rear_axis"/>
+		<origin rpy="0 0 0" xyz="0 0 0"/>
+	</joint>
+	<joint name="origin_to_front_axis" type="fixed">
+		<parent link="base_link"/>
+		<child link="front_axis"/>
+		<origin rpy="0 0 0" xyz="${wheel_separation_x} 0 0"/>
+	</joint>
+
+	<!-- Fixed wheels -->
+	<xacro:macro name="rear_wheel" params="type x_reflect y_reflect">
+    <link name="${type}_wheel">
+      <visual>
+        <material name="default_black"/>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+            <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/> 
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+      </collision>
+      <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+    </link>
+
+    <joint name="${type}_wheel_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="${type}_wheel"/>
+      <origin xyz="${x_reflect*(wheel_separation_x+wheel_xoff)} ${y_reflect*wheel_yoff} 0" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:rear_wheel type="fl" x_reflect="1" y_reflect="1" />
+  <xacro:rear_wheel type="fr" x_reflect="1" y_reflect="-1" />
+  <xacro:rear_wheel type="rl" x_reflect="0" y_reflect="1" />
+  <xacro:rear_wheel type="rr" x_reflect="0" y_reflect="-1" />
+
+	<!-- Gazebo plugins -->
+
+
+</robot>

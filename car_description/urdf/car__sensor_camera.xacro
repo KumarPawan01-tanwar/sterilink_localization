@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+	
+	<!-- Camera sensors-->
+	<!-- Camera sensors parameters-->
+	<xacro:property name="teleop_cam_width" value="0.025"/>
+	<xacro:property name="teleop_cam_length" value="0.09"/>
+	<xacro:property name="teleop_cam_height" value="0.025"/>
+	<xacro:property name="teleop_cam_mass" value="0.125"/>
+
+	<!-- Front teleoperation camera-->
+	<link name="camera_link">
+		<visual>
+			<material name="default_black"/>
+			<origin xyz="0 0.0115 0" rpy="0 0 0"/>
+			<geometry>
+				<box size="${teleop_cam_width} ${teleop_cam_length} ${teleop_cam_height}"/>
+			</geometry>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<box size="${teleop_cam_width} ${teleop_cam_length} ${teleop_cam_height}"/>
+			</geometry>
+		</collision>
+		<xacro:box_inertia m="${teleop_cam_mass}" w="${teleop_cam_width}" d="${teleop_cam_length}" h="${teleop_cam_height}"/>
+	</link>
+
+	<joint name="origin_to_camera_link" type="fixed">
+		<parent link="base_link"/>
+		<child link="camera_link"/>
+		<origin rpy="0 0 0" xyz="0.367 -0.0115 0.190"/>
+	</joint>
+
+
+	<!-- Fisheye camera-->
+	<!-- <link name="front_fisheye_cam"></link>
+	<link name="right_fisheye_cam"></link>
+	<link name="rear_fisheye_cam"></link>
+	<link name="left_fisheye_cam"></link>
+
+	<joint name="origin_to_front_fisheye_cam" type="fixed">
+			<parent link="base_link"/>
+			<child link="front_fisheye_cam"/>
+			<origin rpy="0 0 0" xyz="0.635 0 0.0"/>
+	</joint>
+	<joint name="origin_to_right_fisheye_cam" type="fixed">
+			<parent link="base_link"/>
+			<child link="right_fisheye_cam"/>
+			<origin rpy="0 0 0" xyz="0.35 -0.165 0.107"/>
+	</joint>
+	<joint name="origin_to_rear_fisheye_cam" type="fixed">
+			<parent link="base_link"/>
+			<child link="rear_fisheye_cam"/>
+			<origin rpy="0 0 0" xyz="-0.138 0 0.06"/>
+	</joint>
+	<joint name="origin_to_left_fisheye_cam" type="fixed">
+			<parent link="base_link"/>
+			<child link="left_fisheye_cam"/>
+			<origin rpy="0 0 0" xyz="0.35 0.165 0.107"/>
+	</joint> -->
+
+	<!-- Gazebo plugins-->
+	<gazebo reference="camera_link">
+		<sensor name="depth_camera" type="depth">
+			<visualize>true</visualize>
+			<update_rate>30.0</update_rate>
+			<camera name="camera">
+				<horizontal_fov>1.047198</horizontal_fov>
+				<image>
+					<width>640</width>
+					<height>480</height>
+					<format>R8G8B8</format>
+				</image>
+				<clip>
+					<near>0.05</near>
+					<far>3</far>
+				</clip>
+			</camera>
+			<plugin name="depth_camera_controller" filename="libgazebo_ros_camera.so">
+				<baseline>0.2</baseline>
+				<alwaysOn>true</alwaysOn>
+				<updateRate>0.0</updateRate>
+				<frame_name>camera_depth_frame</frame_name>
+				<pointCloudCutoff>0.5</pointCloudCutoff>
+				<pointCloudCutoffMax>3.0</pointCloudCutoffMax>
+				<distortionK1>0</distortionK1>
+				<distortionK2>0</distortionK2>
+				<distortionK3>0</distortionK3>
+				<distortionT1>0</distortionT1>
+				<distortionT2>0</distortionT2>
+				<CxPrime>0</CxPrime>
+				<Cx>0</Cx>
+				<Cy>0</Cy>
+				<focalLength>0</focalLength>
+				<hackBaseline>0</hackBaseline>
+			</plugin>
+		</sensor>
+	</gazebo>
+
+</robot>
