@@ -21,7 +21,7 @@ At this stage, localization is performed exclusively using LiDAR scan matching, 
 
 ### Included
 - 2D LiDAR scan-to-scan ICP
-- Relative motion estimation between consecutive scans
+- Relative motion estimation (Δx, Δy, Δθ)
 - Accumulated displacement estimation
 - Quantitative accuracy evaluation
 - RMSE-based performance analysis
