@@ -196,7 +196,7 @@ The results establish a clear **baseline for future localization improvements**.
 
 | Topic Name | Message Type | Description |
 |-----------|------------|------------|
-| /static_map | nav_msgs/OccupancyGrid.msg | Static hospital layout in map frame(ENU-coordinates) |
+| /static_map | nav_msgs/OccupancyGrid.msg | odom frame |
 | /ackermann_drive_feedback | ackermann_msgs/AckermannDrive.msg | Robot motion feedback in base_link frame (vehicle frame): speed and steering angle for motion prediction using Ackermann kinematics. |
 | /scan | sensor_msgs/LaserScan.msg | Raw LiDAR measurements use to estimate object boundaries and distance information.  |
 
