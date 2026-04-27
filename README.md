@@ -17,15 +17,42 @@ At this stage, localization is performed exclusively using LiDAR scan matching, 
 ---
 
 <p align="center">
-  <img src="Localization_Architecture.jpg" width="300">
+  <img src="Scenario.jpeg" width="300">
 </p>
 
 <p align="center">
-  <em>Figure: LiDAR–Encoder based localization architecture</em>
+  <em>Figure: Scenario </em>
 </p>
 ``
 
+## User Story: LiDAR Scan-to-Scan Motion Estimation
 
+### Description
+As a **user**, I want the robot to estimate its relative motion using **scan-to-scan LiDAR matching**, so that a **pose measurement can be generated onboard** without relying on external systems such as OptiTrack.
+
+---
+### Acceptance Criteria
+
+- A new LiDAR scan is received at **10 Hz (every 0.1 seconds)**.
+- Each incoming scan is matched with the **previous scan** using a scan matching algorithm.
+- The system estimates the relative motion:
+  - Δx (translation in x)
+  - Δy (translation in y)
+  - Δθ (rotation)
+- The relative transformations are **accumulated over time** to compute the robot’s absolute pose:
+
+---
+## Localization Method
+
+### Scan-to-Scan ICP
+- Consecutive 2D LiDAR scans are aligned using the ICP algorithm  
+- Each scan alignment produces a relative displacement  
+- Relative displacements are accumulated to estimate total travelled distance  
+- No odometry, motion prior, or external correction is applied  
+
+Localization accuracy is evaluated solely by comparing ICP-estimated distance with the known ground-truth distance.
+
+---
 ## Scope of This Work
 <p align="center">
   <img src="Localization_Architecture.jpg" width="300">
@@ -73,18 +100,6 @@ This repository represents a **baseline evaluation** before introducing addition
 - **Ground truth:** Physical measurement of distance  
 
 The experiment was repeated multiple times to ensure consistency and reliability of the results.
-
----
-
-## Localization Method
-
-### Scan-to-Scan ICP
-- Consecutive 2D LiDAR scans are aligned using the ICP algorithm  
-- Each scan alignment produces a relative displacement  
-- Relative displacements are accumulated to estimate total travelled distance  
-- No odometry, motion prior, or external correction is applied  
-
-Localization accuracy is evaluated solely by comparing ICP-estimated distance with the known ground-truth distance.
 
 ---
 
@@ -175,28 +190,6 @@ The results establish a clear **baseline for future localization improvements**.
 
 ---
 
-## Scope of This Work
-<p align="center">
-  <img src="Localization_Architecture.jpg" width="300">
-</p>
-
-<p align="center">
-  <em>Figure: LiDAR–Encoder based localization architecture</em>
-</p>
-``
-
-
-## Frames
-
-<p align="center">
-  <img src="Framese.jpg" width="300">
-</p>
-
-<p align="center">
-  <em>Figure: Frames</em>
-</p>
-``
-
 ## Inputs
 
 | Topic Name | Message Type | Description |
@@ -217,24 +210,7 @@ The results establish a clear **baseline for future localization improvements**.
 
 ---
 
-## User Story: LiDAR Scan-to-Scan Motion Estimation
 
-### Description
-As a **user**, I want the robot to estimate its relative motion using **scan-to-scan LiDAR matching**, so that a **pose measurement can be generated onboard** without relying on external systems such as OptiTrack.
-
----
-
-### Acceptance Criteria
-
-- A new LiDAR scan is received at **10 Hz (every 0.1 seconds)**.
-- Each incoming scan is matched with the **previous scan** using a scan matching algorithm.
-- The system estimates the relative motion:
-  - Δx (translation in x)
-  - Δy (translation in y)
-  - Δθ (rotation)
-- The relative transformations are **accumulated over time** to compute the robot’s absolute pose:
-
----
   
 
 
