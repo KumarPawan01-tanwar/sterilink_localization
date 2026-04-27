@@ -9,8 +9,8 @@ At this stage, localization is performed exclusively using LiDAR scan matching, 
 
 ---
 
-## Physical Scenario for Project
-- An autonomous mobile robot operates in hospital corridors to transport biohazardous waste. The robot navigates in straight paths, detects obstacles, stops when necessary, and resumes motion once the path is clear.
+## Scenario 
+- STERILINK is autonomous mobile robot operates in hospital corridors to transport biohazardous waste. The robot navigates in straight paths, detects obstacles, stops when necessary, and resumes motion once the path is clear.
 - The system uses a pure LiDAR-based scan-to-scan localization approach without any external tracking systems such as OptiTrack. Every 0.1 seconds (10 Hz), incoming LiDAR scans are matched with previous scans using ICP to estimate relative motion (Δx, Δy, Δθ).
 - These incremental motions are accumulated to continuously estimate the robot’s relative pose [x, y, θ], enabling real-time onboard localization. This pose is used directly for navigation, obstacle handling, and motion control in the corridor environment.
 
@@ -26,8 +26,6 @@ At this stage, localization is performed exclusively using LiDAR scan matching, 
 ``
 
 ## User Story: LiDAR Scan-to-Scan Motion Estimation
-
-### Description
 As a **user**, I want the robot to estimate its relative motion using **scan-to-scan LiDAR matching**, so that a **pose measurement can be generated onboard** without relying on external systems such as OptiTrack.
 
 ---
@@ -53,7 +51,7 @@ As a **user**, I want the robot to estimate its relative motion using **scan-to-
 Localization accuracy is evaluated solely by comparing ICP-estimated distance with the known ground-truth distance.
 
 ---
-## Scope of This Work
+## Localization Architecture
 <p align="center">
   <img src="Localization_Architecture.jpg" width="300">
 </p>
@@ -62,14 +60,8 @@ Localization accuracy is evaluated solely by comparing ICP-estimated distance wi
   <em>Figure: LiDAR–Encoder based localization architecture</em>
 </p>
 ``
-
-### Included
-- 2D LiDAR scan-to-scan ICP
-- Relative motion estimation (Δx, Δy, Δθ)
-- Accumulated displacement estimation
-- Quantitative accuracy evaluation
-- RMSE-based performance analysis
 ---
+
 ## Frame work
 - odom → base_link → laser_frame
 - All motion is estimated relative to the starting pose, not globally localized.
