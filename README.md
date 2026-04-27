@@ -140,8 +140,13 @@ Planned extensions include:
 ## Frames
 
 <p align="center">
-    <img src=frames.png" width="150"> 
-</p>`
+  <img src="Framese.jpg" width="300">
+</p>
+
+<p align="center">
+  <em>Figure: Frames</em>
+</p>
+``
 
 ## Inputs
 
