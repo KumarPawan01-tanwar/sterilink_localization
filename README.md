@@ -145,7 +145,7 @@ $$
 ---
 
 <p align="center">
-  <img src="Rviz_Pose_visualz_Pose_visual.png" width="500">
+  <img src="Rviz_Pose_visual.png" width="500">
 </p>
 
 <p align="center">
