@@ -126,14 +126,21 @@ Planned extensions include:
 
 ---
 
-## License
-(Optional: Add your license here, e.g., MIT License)
-
-
-## ROS Interfaces
+## Scope of This Work
+<p align="center">
+  <img src="Localization_Architecture.jpg" width="300">
+</p>
 
 <p align="center">
-    <img src="localization.png" width="500"> 
+  <em>Figure: LiDAR–Encoder based localization architecture</em>
+</p>
+``
+
+
+## Frames
+
+<p align="center">
+    <img src=frames.png" width="150"> 
 </p>`
 
 ## Inputs
@@ -153,7 +160,7 @@ Planned extensions include:
 
 - `ROS 2` (Humble or later)  
 - `Python` 3.10+  
-kjnfidfb
+
 
 `Required packages`:
 - `rclpy` — ROS 2 Python client library  
