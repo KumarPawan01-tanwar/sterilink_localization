@@ -8,17 +8,6 @@ The objective of this work is to evaluate the accuracy and repeatability of pure
 At this stage, localization is performed exclusively using LiDAR scan matching, without wheel encoders, motion models, or sensor fusion.
 
 ---
-## Frame work
-- odom → base_link → laser_frame
-  <p align="center">
-  <img src="Localization_Architecture.jpg" width="300">
-</p>
-
-<p align="center">
-  <em>Figure: LiDAR–Encoder based localization architecture</em>
-</p>
-``
----
 ## Scope of This Work
 <p align="center">
   <img src="Localization_Architecture.jpg" width="300">
@@ -35,6 +24,18 @@ At this stage, localization is performed exclusively using LiDAR scan matching, 
 - Accumulated displacement estimation
 - Quantitative accuracy evaluation
 - RMSE-based performance analysis
+---
+## Frame work
+- odom → base_link → laser_frame
+- All motion is estimated relative to the starting pose, not globally localized.
+  <p align="center">
+  <img src="frames.png" width="1000">
+</p>
+
+<p align="center">
+  <em>Figure: frames</em>
+</p>
+``
 
 ### Not Included
 - Wheel encoder odometry  
@@ -111,6 +112,30 @@ $$
 This behavior is typical in corridor environments where **parallel walls provide weak longitudinal constraints** for scan matching.
 
 ---
+## Limitations
+
+- Accumulated drift over time  
+- No global localization capability  
+- No loop closure mechanism  
+- Sensitive to symmetric environments (e.g., corridors)  
+- No velocity or motion constraints  
+
+> **Note:** This implementation is intended as a baseline system, not a final localization solution.
+
+---
+
+##  Future Work
+
+Planned improvements include:
+
+- Wheel encoder integration  
+- Motion priors for ICP  
+- Extended Kalman Filter (EKF)  
+- Bias correction  
+- Long-term trajectory evaluation  
+- Drift mitigation techniques
+
+---
 
 ## Conclusion
 
@@ -121,18 +146,6 @@ This validation demonstrates that:
 - Bias correction or additional sensing is required for higher accuracy  
 
 The results establish a clear **baseline for future localization improvements**.
-
----
-
-## Future Work
-
-Planned extensions include:
-
-- Integration of axle-mounted encoder data  
-- Motion prior incorporation  
-- Kalman Filter / EKF-based correction  
-- Long-term trajectory evaluation  
-- Bias reduction and drift mitigation  
 
 ---
 
@@ -174,26 +187,28 @@ Planned extensions include:
 
 
 - `ROS 2` (Humble or later)  
-- `Python` 3.10+  
+- `Python` 3.10+
+
+---
+
+## User Story: LiDAR Scan-to-Scan Motion Estimation
+
+### Description
+As a **user**, I want the robot to estimate its relative motion using **scan-to-scan LiDAR matching**, so that a **pose measurement can be generated onboard** without relying on external systems such as OptiTrack.
+
+---
+
+### Acceptance Criteria
+
+- A new LiDAR scan is received at **10 Hz (every 0.1 seconds)**.
+- Each incoming scan is matched with the **previous scan** using a scan matching algorithm.
+- The system estimates the relative motion:
+  - Δx (translation in x)
+  - Δy (translation in y)
+  - Δθ (rotation)
+- The relative transformations are **accumulated over time** to compute the robot’s absolute pose:
+
+---
+  
 
 
-`Required packages`:
-- `rclpy` — ROS 2 Python client library  
-- `nav_msgs` — Standard navigation message types (`Odometry`, `OccupancyGrid`)  
-- `mocap_msgs` — Motion capture data messages (`RigidBodies`)  
-- `sensor_msgs` — Standard sensor messages (`LaserScan`)  
-- `ackermann_msgs` — Ackermann drive feedback messages for motion prediction  
-
-### Installation
-```bash
-cd ~/ros2_ws/src
-# Navigate to the sterilink workspace
-colcon build --packages-select sterilink_localization
-source install/setup.bash
-```
-
-### Running the Node
-Launch the trajectory planning node:
-```bash
-ros2 run sterilink_localization localization_node.py
-```
