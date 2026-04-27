@@ -144,6 +144,16 @@ $$
 ``
 ---
 
+<p align="center">
+  <img src="Rviz_Pose_visualz_Pose_visual.png" width="500">
+</p>
+
+<p align="center">
+  <em>Figure: Rviz_Pose_visual</em>
+</p>
+``
+---
+
 ## Interpretation
 
 - ICP estimates are consistent across trials  
