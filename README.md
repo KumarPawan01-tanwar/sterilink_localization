@@ -1,4 +1,4 @@
-# ICP Scan-to-Scan Localization Validation
+# ICP Scan-to-Scan Localization 
 
 ## Overview
 This repository contains the experimental validation of scan-to-scan localization using the Iterative Closest Point (ICP) algorithm with 2D LiDAR data.
@@ -8,7 +8,17 @@ The objective of this work is to evaluate the accuracy and repeatability of pure
 At this stage, localization is performed exclusively using LiDAR scan matching, without wheel encoders, motion models, or sensor fusion.
 
 ---
+## Frame work
+- odom → base_link → laser_frame
+  <p align="center">
+  <img src="Localization_Architecture.jpg" width="300">
+</p>
 
+<p align="center">
+  <em>Figure: LiDAR–Encoder based localization architecture</em>
+</p>
+``
+---
 ## Scope of This Work
 <p align="center">
   <img src="Localization_Architecture.jpg" width="300">
