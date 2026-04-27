@@ -8,6 +8,24 @@ The objective of this work is to evaluate the accuracy and repeatability of pure
 At this stage, localization is performed exclusively using LiDAR scan matching, without wheel encoders, motion models, or sensor fusion.
 
 ---
+
+## Physical Scenario for Project
+- An autonomous mobile robot operates in hospital corridors to transport biohazardous waste. The robot navigates in straight paths, detects obstacles, stops when necessary, and resumes motion once the path is clear.
+- The system uses a pure LiDAR-based scan-to-scan localization approach without any external tracking systems such as OptiTrack. Every 0.1 seconds (10 Hz), incoming LiDAR scans are matched with previous scans using ICP to estimate relative motion (Δx, Δy, Δθ).
+- These incremental motions are accumulated to continuously estimate the robot’s relative pose [x, y, θ], enabling real-time onboard localization. This pose is used directly for navigation, obstacle handling, and motion control in the corridor environment.
+
+---
+
+<p align="center">
+  <img src="Localization_Architecture.jpg" width="300">
+</p>
+
+<p align="center">
+  <em>Figure: LiDAR–Encoder based localization architecture</em>
+</p>
+``
+
+
 ## Scope of This Work
 <p align="center">
   <img src="Localization_Architecture.jpg" width="300">
@@ -29,7 +47,7 @@ At this stage, localization is performed exclusively using LiDAR scan matching, 
 - odom → base_link → laser_frame
 - All motion is estimated relative to the starting pose, not globally localized.
   <p align="center">
-  <img src="frames.png" width="1000">
+  <img src="frames.png" width="1200">
 </p>
 
 <p align="center">
@@ -101,6 +119,14 @@ $$
 - **Mean Error:** -0.045 m  
 - **RMSE:** 0.2128 m  
 
+<p align="center">
+  <img src="RSME_plot.png" width="500">
+</p>
+
+<p align="center">
+  <em>Figure: RSME_plot</em>
+</p>
+``
 ---
 
 ## Interpretation
