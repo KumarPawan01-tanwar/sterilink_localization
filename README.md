@@ -26,18 +26,15 @@ At this stage, localization is performed exclusively using LiDAR scan matching, 
 ``
 
 ## User Story: LiDAR Scan-to-Scan Motion Estimation
-As a **user**, I want the robot to estimate its relative motion using **scan-to-scan LiDAR matching**, so that a **pose measurement can be generated onboard** without relying on external systems such as OptiTrack.
+As a **User**, I want to compute and visualize the robot’s velocity, acceleration, and turn rate from scan-to-scan matching SLAM pose estimates, **so that** the robot’s dynamic behavior can be analyzed during operation.
 
 ---
 ### Acceptance Criteria
 
-- A new LiDAR scan is received at **10 Hz (every 0.1 seconds)**.
-- Each incoming scan is matched with the **previous scan** using a scan matching algorithm.
-- The system estimates the relative motion:
-  - Δx (translation in x)
-  - Δy (translation in y)
-  - Δθ (rotation)
-- The relative transformations are **accumulated over time** to compute the robot’s absolute pose:
+- Linear velocity is computed whenever a new SLAM pose estimate from scan-to-scan matching is available as  v = Δs / Δt, using consecutive pose positions.
+- Acceleration is computed whenever velocity is updated as  a = Δv / Δt.
+- Turn rate is computed whenever the robot’s orientation (heading) changes as  ω = Δθ / Δt.
+- End-to-end latency between scan input → SLAM pose → computed dynamics → visualization is bounded (e.g., < 2 ms).
 
 ---
 ## Localization Method
