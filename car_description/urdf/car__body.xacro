@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+    
+	<!-- Car base -->
+	<!-- Base Link -->
+	<link name="base_link">
+		<!-- Visual Landrover Evoque Car Model -->
+		<visual>
+		<material name="default_grey"/>
+		<geometry>
+			<mesh filename="package://car_description/meshes/car_lowres.stl" scale="${mesh_scale_xyz}"/> 
+		</geometry>
+		<origin rpy="${pi/2} 0 ${(3/2)*pi}" xyz="${base_xoff} ${base_yoff} ${base_zoff}"/> <!-- move base_link to rear axis centre --> 
+		</visual>
+		<collision>
+			<origin rpy="${pi/2} 0 ${(3/2)*pi}" xyz="${base_xoff} ${base_yoff} ${base_zoff}"/>
+			<geometry>
+				<mesh filename="package://car_description/meshes/car_lowres.stl" scale="${mesh_scale_xyz}"/> 
+			</geometry>
+		</collision>
+		<xacro:box_inertia m="${base_mass}" w="${base_width}" d="${base_length}" h="${base_height}"/>
+	</link>
+
+	<!-- Base Footprint (ground offset from base_link)-->
+  <link name="base_footprint">
+    <xacro:box_inertia m="0" w="0" d="0" h="0"/>
+  </link>
+  <joint name="base_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="base_footprint" />
+    <origin xyz="0 0 ${ground_zoff}" rpy="0 0 0"/>
+  </joint>
+
+	<!-- Car center of gravity-->
+	<link name="car_center"></link>
+	<joint name="origin_to_car_center" type="fixed">
+		<parent link="base_link"/>
+		<child link="car_center"/>
+		<origin rpy="0 0 0" xyz="${car_center_pos}"/>
+	</joint>
+
+</robot>

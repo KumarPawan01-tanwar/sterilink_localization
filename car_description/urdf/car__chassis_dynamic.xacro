@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+	
+	<!-- Chassis dynamic -->
+	<!-- Chassis parameters -->
+	<xacro:property name="shaft_z_length" value="0.06"/>
+	<xacro:property name="shaft_x_length" value="0.02"/>
+	<xacro:property name="shaft_radius" value="0.001"/>
+
+	<!-- Front and rear axles centre -->
+	<link name="rear_axis"></link>
+	<link name="front_axis"></link>
+	<joint name="origin_to_rear_axis" type="fixed">
+		<parent link="base_link"/>
+		<child link="rear_axis"/>
+		<origin rpy="0 0 0" xyz="0 0 0"/>
+	</joint>
+	<joint name="origin_to_front_axis" type="fixed">
+		<parent link="base_link"/>
+		<child link="front_axis"/>
+		<origin rpy="0 0 0" xyz="${wheel_separation_x} 0 0"/>
+	</joint>
+
+	<!-- Front wheels -->
+	<!-- shafts -->
+	<xacro:macro name="shafts" params="type y_reflect">
+	  <link name="shaft_z_${type}">
+      <visual>
+        <material name="lblue"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${shaft_radius}" length="${shaft_z_length}"/>
+        </geometry>
+      </visual>
+    </link>
+    <link name="shaft_x_${type}">
+      <visual>
+        <material name="lblue"/>
+        <origin xyz="${-shaft_x_length/2} 0 0" rpy="0 ${pi/2} 0"/>
+        <geometry>
+          <cylinder radius="${shaft_radius}" length="${shaft_x_length}"/>
+        </geometry>
+      </visual>
+    </link>
+    <joint name="wheel_shaft_${type}" type="revolute">
+      <parent link="front_axis"/>
+      <child link="shaft_z_${type}"/>
+      <origin rpy="0 0 0" xyz="0 ${y_reflect*wheel_separation_y/2} 0"/>
+      <axis xyz="0 0 1" rpy="0 0 0" /> 
+      <limit effort="100" velocity="1" lower="-1" upper="1"/>
+    </joint>
+    <joint name="wheel_shaft_to_servo_${type}" type="fixed">
+      <parent link="shaft_z_${type}"/>
+      <child link="shaft_x_${type}"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </joint>
+	</xacro:macro>
+
+  <xacro:shafts type="fl" y_reflect="1"/>
+  <xacro:shafts type="fr" y_reflect="-1"/>
+
+	<!-- front wheels -->
+    <xacro:macro name="front_wheel" params="type">
+      <link name="${type}_wheel">
+        <visual>
+          <material name="default_black"/>
+          <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+          <geometry>
+              <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+          </geometry>
+        </visual>
+        <collision>
+          <origin xyz="0 0 0" rpy="${pi/2} 0 0"/> 
+          <geometry>
+            <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+          </geometry>
+        </collision>
+        <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+      </link>
+      <joint name="${type}_wheel_joint" type="continuous">
+        <parent link="shaft_z_${type}"/>
+        <child link="${type}_wheel"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+      </joint>
+    </xacro:macro>
+
+    <xacro:front_wheel type="fr"/>
+    <xacro:front_wheel type="fl"/>
+  
+	<!-- Rear wheels -->
+	<xacro:macro name="rear_wheel" params="type y_reflect">
+    <link name="${type}_wheel">
+      <visual>
+        <material name="default_black"/>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+            <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/> 
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+      </collision>
+      <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+    </link>
+
+    <joint name="${type}_wheel_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="${type}_wheel"/>
+      <origin xyz="0 ${y_reflect*wheel_yoff} 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:rear_wheel type="rl" y_reflect="1" />
+  <xacro:rear_wheel type="rr" y_reflect="-1" />
+
+	<!-- Gazebo plugins -->
+
+
+</robot>
