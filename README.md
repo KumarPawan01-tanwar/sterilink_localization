@@ -16,25 +16,15 @@ At this stage, localization is performed exclusively using LiDAR scan matching, 
 
 ---
 
-<p align="center">
-  <img src="Scenario.jpeg" width="300">
-</p>
 
-<p align="center">
-  <em>Figure: Scenario </em>
-</p>
-``
-
-## User Story: LiDAR Scan-to-Scan Motion Estimation
-As a **User**, I want to compute and visualize the robot’s velocity, acceleration, and turn rate from scan-to-scan matching SLAM pose estimates, **so that** the robot’s dynamic behavior can be analyzed during operation.
+## User Story: Localization - RViz Visualization
+As a User, **I want** to visualize the robot's pose and trajectory in RViz **so that**, I can verify localization is working correctly.
 
 ---
 ### Acceptance Criteria
-
-- Linear velocity is computed whenever a new SLAM pose estimate from scan-to-scan matching is available as  v = Δs / Δt, using consecutive pose positions.
-- Acceleration is computed whenever velocity is updated as  a = Δv / Δt.
-- Turn rate is computed whenever the robot’s orientation (heading) changes as  ω = Δθ / Δt.
-- End-to-end latency between scan input → SLAM pose → computed dynamics → visualization is bounded (e.g., < 2 ms).
+- The robot's position and orientation shall be displayed as a marker or TF frame in RViz(map → odom → base_link)
+- A trajectory line of past positions shall be visible in RViz.
+- The visualization shall update in real time as the robot moves..
 
 ---
 ## Localization Method
@@ -48,28 +38,6 @@ As a **User**, I want to compute and visualize the robot’s velocity, accelerat
 Localization accuracy is evaluated solely by comparing ICP-estimated distance with the known ground-truth distance.
 
 ---
-## Localization Architecture
-<p align="center">
-  <img src="Localization_Architecture.jpg" width="300">
-</p>
-
-<p align="center">
-  <em>Figure: LiDAR–Encoder based localization architecture</em>
-</p>
-``
----
-
-## Frame work
-- odom → base_link → laser_frame
-- All motion is estimated relative to the starting pose, not globally localized.
-  <p align="center">
-  <img src="frames.png" width="1200">
-</p>
-
-<p align="center">
-  <em>Figure: frames</em>
-</p>
-``
 
 ### Not Included
 - Wheel encoder odometry  
@@ -80,10 +48,10 @@ This repository represents a **baseline evaluation** before introducing addition
 
 ---
 
-## Experimental Setup
+## Experimental Setup -Linear Motion
 
 - **Environment:** Indoor corridor  
-- **Path length:** 5 meters (measured using a measuring tape)  
+- **Path length:** 4 & 12 meters (measured using a measuring tape)  
 - **Motion:** Straight-line traversal  
 - **Number of trials:** 5  
 - **Ground truth:** Physical measurement of distance  
@@ -91,101 +59,95 @@ This repository represents a **baseline evaluation** before introducing addition
 The experiment was repeated multiple times to ensure consistency and reliability of the results.
 
 ---
+## Corridor Testing - Short Distance(4m)
 
-## Error Calculation
+| Trial | True Distance (m) | ICP Distance (m) | Error = (True - ICP) | Error² |
+|-------|--------------------|--------------------|------------------------|--------------|
+| 1     | 4.00               | 3.9688             | 0.0312                 | 0.00097344   |
+| 2     | 4.00               | 3.9758             | 0.0242                 | 0.00058564   |
+| 3     | 4.00               | 3.9714             | 0.0286                 | 0.00081796   |
+| 4     | 4.00               | 3.9599             | 0.0401                 | 0.00160801   |
+| 5     | 4.00               | 3.9899             | 0.0101                 | 0.00010201   |
 
-For each trial:
+- **Sum of Error² = 0.00408706**
+- **MSE = 0.00081741**
+- **RMSE = 0.02859**
 
-$$
-Error = d_{ICP} - d_{true}
-$$
+## Corridor Testing - Long Distance(12m)
 
-Where:
-- $d_{true} = 5.0 \, m$
-- $d_{ICP}$ = distance estimated by ICP
+| Trial | True Distance (m) | ICP Distance (m) | Error = (True - ICP) | Error² |
+|-------|--------------------|--------------------|------------------------|---------------|
+| 1     | 12.00              | 11.8747            | 0.1253                 | 0.01570009    |
+| 2     | 12.00              | 11.6545            | 0.3455                 | 0.11937025    |
+| 3     | 12.00              | 11.7642            | 0.2358                 | 0.05560164    |
+| 4     | 12.00              | 11.7859            | 0.2141                 | 0.04583881    |
+| 5     | 12.00              | 11.8132            | 0.1868                 | 0.03489424    |
 
-## Root Mean Square Error (RMSE)
+- **Sum of Error² = 0.27140503**
+- **MSE = 0.054281006**
+- **RMSE = 0.233**
 
-$$
-RMSE = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (d_{ICP,i} - d_{true})^2}
-$$
-
-## Experimental Results
-
-| Trial | True Distance (m) | ICP Distance (m) | Error (m) | Squared Error (m²) |
-|------|------------------|------------------|----------|--------------------|
-| 1    | 5.00             | 4.89             | -0.11    | 0.0121             |
-| 2    | 5.00             | 4.85             | -0.15    | 0.0225             |
-| 3    | 5.00             | 4.80             | -0.20    | 0.0400             |
-| 4    | 5.00             | 4.71             | -0.29    | 0.0841             |
-| 5    | 5.00             | 4.74             | -0.26    | 0.0676             |
-
-- **Mean Error:** -0.045 m  
-- **RMSE:** 0.2128 m  
-
-<p align="center">
-  <img src="RSME_plot.png" width="500">
-</p>
-
-<p align="center">
-  <em>Figure: RSME_plot</em>
-</p>
-``
 ---
 
-<p align="center">
-  <img src="Rviz_Pose_visual.png" width="500">
-</p>
+## Experimental Set - Angle Measurement - Clockwise (Loop Closure Test)
 
-<p align="center">
-  <em>Figure: Rviz_Pose_visual</em>
-</p>
-``
+| Trial | True Angle (deg) | ICP Angle Initial (deg) | ICP Angle Final (deg) | Error = (True - ICP) | Error² |
+|-------|-------------------|---------------------------|--------------------------|------------------------|----------|
+| 1     | 360               | 0.6                        | 1.35                      | -0.75                   | 0.5625   |
+| 2     | 360               | 0.06                       | -0.6                      | 0.66                    | 0.4356   |
+| 3     | 360               | 0.13                       | 1.61                      | -1.48                   | 2.1904   |
+| 4     | 360               | -0.31                      | 0.23                      | -0.54                   | 0.2916   |
+| 5     | 360               | -0.45                      | 0.77                      | -1.22                   | 1.4884   |
+
+-**Sum of Error² = 4.9685**
+-**MSE = 0.9937**
+-**RMSE = 0.9968**
+
+## Experimental Set - Angle Measurement - Anticlockwise (Loop Closure Test)
+
+| Trial | True Angle (deg) | ICP Angle Initial (deg) | ICP Angle Final (deg) | Error = (True - ICP) | Error² |
+|-------|-------------------|---------------------------|--------------------------|------------------------|----------|
+| 1     | 360               | -0.21                      | -1.31                     | 1.1                     | 1.21     |
+| 2     | 360               | -0.1                       | -1.61                     | 1.51                    | 2.2801   |
+| 3     | 360               | -0.11                      | -2.73                     | 2.62                    | 6.8644   |
+| 4     | 360               | -0.15                      | -1.91                     | 1.76                    | 3.0976   |
+| 5     | 360               | -0.17                      | -2.53                     | 2.36                    | 5.5696   |
+
+- **Sum of Error² = 19.0217**
+- **MSE = 3.80434**
+- **RMSE = 1.95**
+
 ---
 
 ## Interpretation
-
-- ICP estimates are consistent across trials  
-- All errors share the same sign → indicates **systematic underestimation**  
-- Average deviation ≈ **21.3 cm (~4.26%)**  
+- * ICP systematically underestimates corridor distance, with RMSE ≈ 2.86 cm (short) and ≈ 23.3 cm (long) — error increases with distance.
+- * Anticlockwise drift is consistently same-signed (RMSE ≈ 1.95°); clockwise drift is more variable (RMSE ≈ 0.9968°).
 
 This behavior is typical in corridor environments where **parallel walls provide weak longitudinal constraints** for scan matching.
 
 ---
 ## Limitations
-
-- Accumulated drift over time  
-- No global localization capability  
-- No loop closure mechanism  
-- Sensitive to symmetric environments (e.g., corridors)  
-- No velocity or motion constraints  
+* Not good for long corridors - Parallel  walls look the same everywhere, the algorithm struggles to find the  distance between the 2 Consecutive points along the corridor.
+* ICP can get stuck on a wrong alignment if the starting guess is too far off, instead of finding the correct one - known as a local minimum.
+* ICP needs enough overlap between scans to work; if the robot moves too fast, matching can fail.
+* Small errors from each scan match add up over time, causing drift in loop closure. 
 
 > **Note:** This implementation is intended as a baseline system, not a final localization solution.
 
 ---
 
 ##  Future Work
-
 Planned improvements include:
 
 - Wheel encoder integration  
-- Motion priors for ICP  
 - Extended Kalman Filter (EKF)  
 - Bias correction  
 - Long-term trajectory evaluation  
-- Drift mitigation techniques
-
+  
 ---
 
 ## Conclusion
-
-This validation demonstrates that:
-
-- Scan-to-scan ICP provides **stable and repeatable motion estimates**
-- Pure ICP alone exhibits a **systematic bias in straight corridors**
-- Bias correction or additional sensing is required for higher accuracy  
-
-The results establish a clear **baseline for future localization improvements**.
+This project evaluated the accuracy of an ICP-based localization system through corridor distance tests and loop closure angle tests. Results show that ICP systematically underestimates distance, with error increasing for longer distances (RMSE ≈ 2.86 cm for 4 m, ≈ 23.3 cm for 12 m), and exhibits angular drift after a full 360° rotation (RMSE ≈ 1.95° anticlockwise, ≈ 0.997° clockwise). These results highlight known limitations of ICP in feature-poor environments like corridors. The system serves as a working baseline, with future improvements such as sensor fusion and drift correction expected to improve long-term accuracy..
 
 ---
 
