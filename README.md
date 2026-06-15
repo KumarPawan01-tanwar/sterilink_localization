@@ -119,6 +119,8 @@ The experiment was repeated multiple times to ensure consistency and reliability
 
 <p align="center">
   <img src="Fig_1_Angle.png" width="700">
+    <br>
+  <em>Fig_1_Angle_measurement</em>
 </p>
 
 ---
