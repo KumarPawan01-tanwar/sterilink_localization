@@ -117,6 +117,10 @@ The experiment was repeated multiple times to ensure consistency and reliability
 - **MSE = 3.80434**
 - **RMSE = 1.95**
 
+<p align="center">
+  <img src="images/Angle_measurement.png" width="700">
+</p>
+
 ---
 
 ## Interpretation
