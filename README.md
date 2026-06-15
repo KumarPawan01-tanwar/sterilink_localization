@@ -91,9 +91,9 @@ The experiment was repeated multiple times to ensure consistency and reliability
   <img src="Graph_1.png" width="700">
   <br>
   <em> Graph_1 (4m and 8m) </em>
-
-    
 </p>
+
+
 <table>
   <tr>
     <td align="center">
@@ -136,10 +136,17 @@ The experiment was repeated multiple times to ensure consistency and reliability
 - **MSE = 3.80434**
 - **RMSE = 1.95**
 
+
+<p align="center">
+  <img src="Graph_2.png" width="700">
+  <br>
+  <em> Graph_2 (Clockwise and Anticlockwise) </em>
+</p>
+
 <p align="center">
   <img src="Fig_1_Angle.png" width="700">
     <br>
-  <em>Fig_1_Angle_measurement</em>
+  <em>Fig_3_Angle_measurement</em>
 </p>
 
 ---
