@@ -87,6 +87,19 @@ The experiment was repeated multiple times to ensure consistency and reliability
 - **MSE = 0.054281006**
 - **RMSE = 0.233**
 
+<p align="center">
+  <img src="Distance_1.png" width="700">
+    <br>
+  <em>Fig_1_Distance_1</em>
+</p>
+
+
+<p align="center">
+  <img src="Distance_2.png" width="700">
+    <br>
+  <em>Fig_1_Distance_2</em>
+</p>
+
 ---
 
 ## Experimental Set - Angle Measurement - Clockwise (Loop Closure Test)
