@@ -86,6 +86,14 @@ The experiment was repeated multiple times to ensure consistency and reliability
 - **Sum of Error² = 0.27140503**
 - **MSE = 0.054281006**
 - **RMSE = 0.233**
+
+<p align="center">
+  <img src="Graph_1.png" width="700">
+  <br>
+  <em> Graph_1 (4m and 8m) </em>
+
+    
+</p>
 <table>
   <tr>
     <td align="center">
@@ -94,7 +102,7 @@ The experiment was repeated multiple times to ensure consistency and reliability
     </td>
     <td align="center">
       <img src="Distance_2.png" width="650"><br>
-      <em>Fig_1_Distance_2</em>
+      <em>Fig_2_Distance_2</em>
     </td>
   </tr>
 </table>
