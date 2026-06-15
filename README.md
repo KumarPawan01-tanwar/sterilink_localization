@@ -118,7 +118,7 @@ The experiment was repeated multiple times to ensure consistency and reliability
 - **RMSE = 1.95**
 
 <p align="center">
-  <img src="Angle_measurement.png" width="700">
+  <img src="Fig_1_Angle.png" width="700">
 </p>
 
 ---
