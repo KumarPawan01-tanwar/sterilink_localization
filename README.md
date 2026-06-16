@@ -10,7 +10,7 @@ At this stage, localization is performed exclusively using LiDAR scan matching, 
 ---
 
 ## Scenario 
-- STERILINK is autonomous mobile robot operates in hospital corridors to transport biohazardous waste. The robot navigates in straight paths, detects obstacles, stops when necessary, and resumes motion once the path is clear.
+- STERILINK is autonomous mobile robot operates in hospital corridors to transport biohazardous waste. The robot navigates on path defined by pathplanner, detects obstacles, stops when necessary, and resumes motion once the path is clear.
 - The system uses a pure LiDAR-based scan-to-scan localization approach without any external tracking systems such as OptiTrack. Every 0.1 seconds (10 Hz), incoming LiDAR scans are matched with previous scans using ICP to estimate relative motion (Δx, Δy, Δθ).
 - These incremental motions are accumulated to continuously estimate the robot’s relative pose [x, y, θ], enabling real-time onboard localization. This pose is used directly for navigation, obstacle handling, and motion control in the corridor environment.
 
