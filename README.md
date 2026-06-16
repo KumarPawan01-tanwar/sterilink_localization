@@ -108,7 +108,7 @@ The experiment was repeated multiple times to ensure consistency and reliability
 </table>
 ---
 
-## Experimental Set - Angle Measurement - Clockwise (Loop Closure Test)
+## Experimental Setup - Angle Measurement - Clockwise (Loop Closure Test)
 
 | Trial | True Angle (deg) | ICP Angle Initial (deg) | ICP Angle Final (deg) | Error = (True - ICP) | Error² |
 |-------|-------------------|---------------------------|--------------------------|------------------------|----------|
@@ -118,11 +118,11 @@ The experiment was repeated multiple times to ensure consistency and reliability
 | 4     | 360               | -0.31                      | 0.23                      | -0.54                   | 0.2916   |
 | 5     | 360               | -0.45                      | 0.77                      | -1.22                   | 1.4884   |
 
--**Sum of Error² = 4.9685**
--**MSE = 0.9937**
--**RMSE = 0.9968**
+- **Sum of Error² = 4.9685**
+- **MSE = 0.9937**
+- **RMSE = 0.9968**
 
-## Experimental Set - Angle Measurement - Anticlockwise (Loop Closure Test)
+## Experimental Setup - Angle Measurement - Anticlockwise (Loop Closure Test)
 
 | Trial | True Angle (deg) | ICP Angle Initial (deg) | ICP Angle Final (deg) | Error = (True - ICP) | Error² |
 |-------|-------------------|---------------------------|--------------------------|------------------------|----------|
@@ -152,8 +152,8 @@ The experiment was repeated multiple times to ensure consistency and reliability
 ---
 
 ## Interpretation
-- * ICP systematically underestimates corridor distance, with RMSE ≈ 2.86 cm (short) and ≈ 23.3 cm (long) — error increases with distance.
-- * Anticlockwise drift is consistently same-signed (RMSE ≈ 1.95°); clockwise drift is more variable (RMSE ≈ 0.9968°).
+- ICP systematically underestimates corridor distance, with RMSE ≈ 2.86 cm (short) and ≈ 23.3 cm (long) — error increases with distance.
+- Anticlockwise drift is consistently same-signed (RMSE ≈ 1.95°); clockwise drift is more variable (RMSE ≈ 0.9968°).
 
 This behavior is typical in corridor environments where **parallel walls provide weak longitudinal constraints** for scan matching.
 
