@@ -90,7 +90,7 @@ The experiment was repeated multiple times to ensure consistency and reliability
 <p align="center">
   <img src="Graph_1.png" width="700">
   <br>
-  <em> Graph_1 (4m and 8m) </em>
+  <em> Graph_1 (4m and 12m) </em>
 </p>
 
 
