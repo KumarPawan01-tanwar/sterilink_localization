@@ -2,11 +2,9 @@
 """
 STERILINK - ICP Scan Matcher Node v2.0
 Subscribes : /scan (sensor_msgs/LaserScan)
-Publishes  : /odom_icp (nav_msgs/Odometry)
-
-Motion gate: Only publishes when motion exceeds LiDAR noise floor.
-Threshold: 15mm translation OR 1 degree rotation.
+Publishes  : /odom (nav_msgs/Odometry)
 """
+
 import numpy as np
 from scipy.spatial import cKDTree
 import rclpy
@@ -19,70 +17,102 @@ import tf2_ros
 
 
 def normalize_angle(a):
+    # keep angle within (-pi, pi]
     return (a + np.pi) % (2 * np.pi) - np.pi
 
+
 def make_T(dx, dy, dtheta):
+    # 2D homogeneous transform matrix from (x, y, angle)
     c, s = np.cos(dtheta), np.sin(dtheta)
     return np.array([[c,-s,dx],[s,c,dy],[0,0,1]], dtype=np.float64)
 
+
 def extract_pose(T):
+    # pull x, y, theta back out of a transform matrix
     return T[0,2], T[1,2], np.arctan2(T[1,0], T[0,0])
+
 
 def icp_2d(source, target, max_iter=50, conv_thresh=1e-4,
            max_corr_dist=0.5, min_points=50):
+    
     src = source.copy()
     T_accum = np.eye(3, dtype=np.float64)
+
     for _ in range(max_iter):
+
+        # find closest target point for each source point
         tree = cKDTree(target)
         dists, idx = tree.query(src, k=1, workers=-1)
+
+        # drop pairs that are too far apart
         valid = dists < max_corr_dist
         if valid.sum() < min_points:
             return T_accum, False
+
         src_m, tgt_m = src[valid], target[idx[valid]]
+
+        # compute centroids
         mu_s, mu_t = src_m.mean(0), tgt_m.mean(0)
+
+        # best rotation via SVD
         H = (src_m - mu_s).T @ (tgt_m - mu_t)
         U, _, Vt = np.linalg.svd(H)
         R = Vt.T @ U.T
+
+        # fix reflection if SVD flipped the sign
         if np.linalg.det(R) < 0:
             Vt[-1,:] *= -1
             R = Vt.T @ U.T
+
         t = mu_t - R @ mu_s
         dtheta = np.arctan2(R[1,0], R[0,0])
+
         T_accum = make_T(t[0], t[1], dtheta) @ T_accum
+
+        # apply this iteration's correction to source points
         src = (R @ src.T).T + t
+
+        # stop early if movement is negligible
         if np.linalg.norm(t) < conv_thresh and abs(dtheta) < conv_thresh:
             break
+
     return T_accum, True
 
 
 class ICPScanMatcherNode(Node):
+
     def __init__(self):
         super().__init__('icp_scan_matcher')
+
+        # tunable params — can be overridden at launch
         self.declare_parameter('max_iterations',          50)
         self.declare_parameter('convergence_threshold',   1e-4)
         self.declare_parameter('max_correspondence_dist', 0.5)
         self.declare_parameter('min_points',              50)
         self.declare_parameter('range_min_clip',          0.10)
         self.declare_parameter('range_max_clip',          20.0)
-        self.declare_parameter('min_translation',         0.015)  # 15mm > LiDAR noise
-        self.declare_parameter('min_rotation',            0.0175) # 1 degree
+        self.declare_parameter('min_translation',         0.015)  # 15mm
+        self.declare_parameter('min_rotation',            0.0175) # ~1 deg
 
         self.max_iter      = self.get_parameter('max_iterations').value
         self.conv_thresh   = self.get_parameter('convergence_threshold').value
         self.max_corr_dist = self.get_parameter('max_correspondence_dist').value
         self.min_points    = self.get_parameter('min_points').value
-        self.range_min    = self.get_parameter('range_min_clip').value
-        self.range_max    = self.get_parameter('range_max_clip').value
-        self.min_trans    = self.get_parameter('min_translation').value
-        self.min_rot      = self.get_parameter('min_rotation').value
+        self.range_min     = self.get_parameter('range_min_clip').value
+        self.range_max     = self.get_parameter('range_max_clip').value
+        self.min_trans     = self.get_parameter('min_translation').value
+        self.min_rot       = self.get_parameter('min_rotation').value
 
-        self.prev_scan = None
-        self.T_world   = np.eye(3, dtype=np.float64)
+        self.prev_scan = None                         # no scan received yet
+        self.T_world   = np.eye(3, dtype=np.float64) # global pose, starts at origin
 
+        # lidar doesn't need reliable delivery — it's high frequency
         lidar_qos = QoSProfile(depth=10,
             reliability=ReliabilityPolicy.BEST_EFFORT,
             durability=DurabilityPolicy.VOLATILE)
-        reliable  = QoSProfile(depth=10,
+
+        # odom output must be reliable
+        reliable = QoSProfile(depth=10,
             reliability=ReliabilityPolicy.RELIABLE,
             durability=DurabilityPolicy.VOLATILE)
 
@@ -100,18 +130,29 @@ class ICPScanMatcherNode(Node):
 
     def _scan_to_points(self, msg):
         n = len(msg.ranges)
+
+        # angle for each ray
         angles = msg.angle_min + np.arange(n, dtype=np.float64) * msg.angle_increment
         ranges = np.array(msg.ranges, dtype=np.float64)
+
+        # filter out bad / out-of-range readings
         valid = (np.isfinite(ranges) &
                  (ranges > max(msg.range_min, self.range_min)) &
                  (ranges < min(msg.range_max, self.range_max)))
+
         r, a = ranges[valid], angles[valid]
+
+        # polar to cartesian
         return np.column_stack([r*np.cos(a), r*np.sin(a)])
 
     def scan_callback(self, msg):
         pts = self._scan_to_points(msg)
+
+        # not enough points to work with
         if len(pts) < self.min_points:
             return
+
+        # wait for a second scan before doing anything
         if self.prev_scan is None:
             self.prev_scan = pts
             self.get_logger().info('ICP: first scan — ready')
@@ -120,39 +161,55 @@ class ICPScanMatcherNode(Node):
         T_rel, ok = icp_2d(pts, self.prev_scan,
                            self.max_iter, self.conv_thresh,
                            self.max_corr_dist, self.min_points)
+
         if not ok:
             self.prev_scan = pts
             return
 
+        # icp gives new→old, invert to get actual robot motion
         T_motion = np.linalg.inv(T_rel)
         dx, dy, dtheta = extract_pose(T_motion)
 
-        # MOTION GATE — reject if below noise floor
+        # ignore movement smaller than sensor noise
         if (np.sqrt(dx**2 + dy**2) < self.min_trans and
                 abs(normalize_angle(dtheta)) < self.min_rot):
             self.prev_scan = pts
             return
 
+        # chain motion onto global pose
         self.T_world = self.T_world @ T_motion
+
         x, y, theta = extract_pose(self.T_world)
         theta = normalize_angle(theta)
+
+        # rebuild matrix to avoid floating point drift
         self.T_world = make_T(x, y, theta)
+
         self.prev_scan = pts
         self._publish(msg.header.stamp, x, y, theta)
 
     def _publish(self, stamp, x, y, theta):
+
+        # --- odometry message ---
         msg = Odometry()
         msg.header.stamp    = stamp
         msg.header.frame_id = 'map'
         msg.child_frame_id  = '7/base_link'
         msg.pose.pose.position.x = x
         msg.pose.pose.position.y = y
+
+        # 2D rotation as quaternion (only z and w matter)
         msg.pose.pose.orientation.z = float(np.sin(theta/2))
         msg.pose.pose.orientation.w = float(np.cos(theta/2))
+
+        # covariance — x less certain than y and yaw
         cov = [0.0]*36
         cov[0]=0.0100; cov[7]=0.0004; cov[35]=0.0004
         msg.pose.covariance = cov
+
         self.odom_pub.publish(msg)
+
+        # --- TF transform (same pose, different format) ---
         t = TransformStamped()
         t.header.stamp    = stamp
         t.header.frame_id = 'map'
@@ -174,6 +231,7 @@ def main(args=None):
     finally:
         node.destroy_node()
         rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()
