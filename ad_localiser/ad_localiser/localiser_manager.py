@@ -1,8 +1,3 @@
-"""
-Author(s): 
-- ahmad-ahsan.bin-yusob@hs-coburg.de (Ahsan Yusob)
-"""
-
 import rclpy
 from rclpy.node import Node
 from rcl_interfaces.msg import ParameterDescriptor
