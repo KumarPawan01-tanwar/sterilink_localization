@@ -1,8 +1,3 @@
-"""
-Author(s): 
-- ahmad-ahsan.bin-yusob@hs-coburg.de (Ahsan Yusob)
-"""
-
 from tf_transformations import euler_from_quaternion, quaternion_from_euler, quaternion_multiply, quaternion_inverse
 import math
 import numpy as np
