@@ -1,5 +1,0 @@
-[console_scripts]
-ekf_localization = sterilink_localization.ekf_localization_node:main
-encoder_odometry = sterilink_localization.encoder_odometry_node:main
-icp_scan_matcher = sterilink_localization.icp_scan_matcher_node:main
-
