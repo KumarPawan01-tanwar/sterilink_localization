@@ -1,9 +1,3 @@
-"""
-Tests for the 2D ICP module and the scan-matching math used by the node.
-
-Run with:  python3 test_icp.py      or      pytest test_icp.py -v
-"""
-
 import time
 import numpy as np
 
