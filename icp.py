@@ -1,17 +1,3 @@
-"""
-2D ICP for laser scan matching.
-
-Implements the same core ideas as Andrea Censi's Canonical Scan Matcher (CSM):
-  * point-to-line metric (PL-ICP) with fallback to vanilla point-to-point ICP
-  * initial guess ("first_guess") support
-  * maximum correspondence distance gating
-  * outlier trimming (discard the worst X% of correspondences)
-  * convergence thresholds on translation (epsilon_xy) and rotation (epsilon_theta)
-
-Pure Python + NumPy (+ SciPy cKDTree for fast nearest neighbours, with a
-brute-force fallback if SciPy is unavailable).
-"""
-
 import numpy as np
 
 try:
