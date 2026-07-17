@@ -1,14 +1,3 @@
-"""
-Integration test for the scan-matcher pipeline WITHOUT ROS.
-
-Replicates exactly the math used in laser_scan_matcher.py (keyframes,
-first-guess prediction, laser<->base frame propagation) and drives it with a
-simulated robot moving through a rectangular room. Verifies the estimated
-trajectory tracks the ground truth.
-
-Run with:  python3 test_pipeline.py     or     pytest test_pipeline.py -v
-"""
-
 import numpy as np
 
 import icp
